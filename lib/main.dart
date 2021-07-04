@@ -39,6 +39,8 @@ class Guessable {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int _correctAnswers = 0;
+  int _incorrectAnswers = 0;
   List<Guessable> listTab = [
     Guessable("Lean a little bit closer, see",
         "Roses really smell like poo-poo-ooh", "Outkast", "Roses"),
@@ -47,7 +49,21 @@ class _MyHomePageState extends State<MyHomePage> {
     Guessable("Tra la li", "asd", "Marcus", "songTitle")
   ];
 
-  void _incrementCounter() {
+  void _correctGuess() {
+    setState(() {
+      _correctAnswers++;
+    });
+    _goToNextSong();
+  }
+
+  void _incorrectGuess() {
+    setState(() {
+      _incorrectAnswers++;
+    });
+    _goToNextSong();
+  }
+
+  void _goToNextSong() {
     setState(() {
       if (_counter + 1 == listTab.length) {
         _counter = 0;
@@ -67,36 +83,58 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         bottom: true,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
-                child: Card(
+            Card(
+              child: FittedBox(
+                  fit: BoxFit.fitWidth, child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Correct guesses: $_correctAnswers"),
+                  )),
+            ),
+            Card(
               elevation: 2.0,
-              child: Column(
-                children: [
-                  Text(currentGuess.sing,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline3?.copyWith(
-                            color: Colors.amber,
-                          )),
-                  Text(currentGuess.guess,
-                      textAlign: TextAlign.center,
-
-                      style: Theme.of(context).textTheme.headline3),
-                  Center(
-                    child: Row(
-                      children: [
-                        Text(currentGuess.artist,
-                            style: Theme.of(context).textTheme.headline5),
-                        Text(" - ", style: Theme.of(context).textTheme.headline5),
-                        Text(currentGuess.songTitle,
-                            style: Theme.of(context).textTheme.headline5)
-                      ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(currentGuess.sing,
+                            textAlign: TextAlign.center,
+                            style:
+                                Theme.of(context).textTheme.headline3?.copyWith(
+                                      color: Colors.deepOrangeAccent,
+                                    )),
+                      ),
                     ),
-                  )
-                ],
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(currentGuess.guess,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headline3),
+                      ),
+                    ),
+                    Center(
+                      child: Row(
+                        children: [
+                          Text(currentGuess.artist,
+                              style: Theme.of(context).textTheme.headline5),
+                          Text(" - ",
+                              style: Theme.of(context).textTheme.headline5),
+                          Text(currentGuess.songTitle,
+                              style: Theme.of(context).textTheme.headline5)
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            )),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -105,14 +143,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         icon: const Icon(Icons.close),
                         label: const Text("Miss"),
                         onPressed: () {
-                          _incrementCounter();
+                          _incorrectGuess();
                         })),
                 Expanded(
                     child: TextButton.icon(
                         icon: const Icon(Icons.check),
                         label: const Text("Hit"),
                         onPressed: () {
-                          _incrementCounter();
+                          _correctGuess();
                         }))
               ],
             )
