@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -39,8 +41,9 @@ class Guessable {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  int _correctAnswers = 0;
-  int _incorrectAnswers = 0;
+  int _correctAnswersT1 = 0;
+  int _correctAnswersT2 = 0;
+  bool _teamTurn = true;
   List<Guessable> listTab = [
     Guessable("Lean a little bit closer, see",
         "Roses really smell like poo-poo-ooh", "Outkast", "Roses"),
@@ -51,20 +54,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _correctGuess() {
     setState(() {
-      _correctAnswers++;
+      print("hej: $_teamTurn");
+      if(_teamTurn) {
+        _correctAnswersT1++;
+      } else {
+        _correctAnswersT2++;
+      }
     });
     _goToNextSong();
   }
 
   void _incorrectGuess() {
-    setState(() {
-      _incorrectAnswers++;
-    });
     _goToNextSong();
   }
 
   void _goToNextSong() {
     setState(() {
+      _teamTurn = !_teamTurn;
       if (_counter + 1 == listTab.length) {
         _counter = 0;
       } else {
@@ -86,18 +92,46 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Card(
-              child: FittedBox(
-                  fit: BoxFit.fitWidth, child: Padding(
+              child: Column(
+                children: [
+                  FittedBox(
+                      fit: BoxFit.fitWidth, child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Team 1 correct: $_correctAnswersT1",
+                            style:
+                            Theme.of(context).textTheme.headline3?.copyWith(
+                              color: Colors.red[300],
+                            ),
+                        ),
+                      )),
+                  FittedBox(
+                      fit: BoxFit.fitWidth, child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Correct guesses: $_correctAnswers"),
+                    child: Text("Team 2 correct: $_correctAnswersT2", style:
+                    Theme.of(context).textTheme.headline3?.copyWith(
+                      color: Colors.blue[300],
+                    )),
                   )),
+                ],
+              ),
             ),
             Card(
               elevation: 2.0,
+              color: _teamTurn ? Colors.red[100] : Colors.blue[100],
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
+                    FittedBox(
+                        fit: BoxFit.fitWidth, child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Team " + (_teamTurn ? "1" : "2") + " guessing",
+                        style:
+                        Theme.of(context).textTheme.headline5?.copyWith(
+                          color: _teamTurn ? Colors.red[900] : Colors.blue[900],
+                        ),
+                      ),
+                    )),
                     FittedBox(
                       fit: BoxFit.fitWidth,
                       child: Padding(
